@@ -1,0 +1,159 @@
+# Setjoo Social: Postiz on its own server (sj-social-prod-01).
+# Same stack as the upstream docker-compose.yaml, with secrets moved to .env,
+# Setjoo Identity as the only login, and debug-only services dropped.
+#
+#   cp .env.example .env   # fill in, never commit
+#   docker compose up -d
+#
+# Locally the app is at http://127.0.0.1:5028 (Setjoo's reserved Social port).
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: '20m'
+    max-file: '5'
+
+services:
+  postiz:
+    image: ${POSTIZ_IMAGE:-ghcr.io/gitroomhq/postiz-app:latest}
+    container_name: postiz
+    restart: always
+    env_file: .env
+    environment:
+      DATABASE_URL: 'postgresql://postiz:${POSTIZ_DB_PASSWORD}@postiz-postgres:5432/postiz'
+      REDIS_URL: 'redis://postiz-redis:6379'
+      BACKEND_INTERNAL_URL: 'http://localhost:3000'
+      TEMPORAL_ADDRESS: 'temporal:7233'
+      IS_GENERAL: 'true'
+      # Setjoo Identity is the only way in. Local email/password sign-up is off;
+      # the generic OAuth provider can still create accounts on first login.
+      DISABLE_REGISTRATION: 'true'
+      POSTIZ_GENERIC_OAUTH: 'true'
+      POSTIZ_OAUTH_CLIENT_ID: 'setjoo-social'
+      NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME: 'Setjoo'
+      UPLOAD_DIRECTORY: '/uploads'
+      NEXT_PUBLIC_UPLOAD_DIRECTORY: '/uploads'
+      NX_ADD_PLUGINS: 'false'
+    volumes:
+      - postiz-config:/config/
+      - postiz-uploads:/uploads/
+    ports:
+      - '${POSTIZ_BIND:-127.0.0.1}:${POSTIZ_PORT:-5028}:5000'
+    extra_hosts:
+      # Lets the container reach Setjoo Identity running on the host in local dev.
+      - 'host.docker.internal:host-gateway'
+    networks: [postiz-network, temporal-network]
+    depends_on:
+      postiz-postgres: { condition: service_healthy }
+      postiz-redis: { condition: service_healthy }
+      temporal: { condition: service_started }
+    logging: *logging
+
+  postiz-postgres:
+    image: postgres:17-alpine
+    container_name: postiz-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postiz
+      POSTGRES_PASSWORD: ${POSTIZ_DB_PASSWORD}
+      POSTGRES_DB: postiz
+    volumes:
+      - postiz-postgres-data:/var/lib/postgresql/data
+    networks: [postiz-network]
+    healthcheck:
+      test: pg_isready -U postiz -d postiz
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging: *logging
+
+  postiz-redis:
+    image: redis:7.2
+    container_name: postiz-redis
+    restart: always
+    volumes:
+      - postiz-redis-data:/data
+    networks: [postiz-network]
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging: *logging
+
+  # --- Temporal (Postiz's job runner). Postiz uses search attributes, so keep Elasticsearch.
+  temporal-elasticsearch:
+    image: elasticsearch:7.17.27
+    container_name: temporal-elasticsearch
+    restart: always
+    environment:
+      - cluster.routing.allocation.disk.threshold_enabled=true
+      - cluster.routing.allocation.disk.watermark.low=512mb
+      - cluster.routing.allocation.disk.watermark.high=256mb
+      - cluster.routing.allocation.disk.watermark.flood_stage=128mb
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - xpack.security.enabled=false
+    volumes:
+      - temporal-es-data:/usr/share/elasticsearch/data
+    networks: [temporal-network]
+    logging: *logging
+
+  temporal-postgresql:
+    image: postgres:16
+    container_name: temporal-postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: ${TEMPORAL_DB_PASSWORD}
+    volumes:
+      - temporal-postgres-data:/var/lib/postgresql/data
+    networks: [temporal-network]
+    logging: *logging
+
+  temporal:
+    image: temporalio/auto-setup:1.28.1
+    container_name: temporal
+    restart: always
+    depends_on: [temporal-postgresql, temporal-elasticsearch]
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=${TEMPORAL_DB_PASSWORD}
+      - POSTGRES_SEEDS=temporal-postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - ENABLE_ES=true
+      - ES_SEEDS=temporal-elasticsearch
+      - ES_VERSION=v7
+      - TEMPORAL_NAMESPACE=default
+    volumes:
+      - ../../dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks: [temporal-network]
+    logging: *logging
+
+  # Temporal UI only on localhost; reach it on the server through an SSH tunnel.
+  temporal-ui:
+    image: temporalio/ui:2.34.0
+    container_name: temporal-ui
+    restart: always
+    profiles: [debug]
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+    ports:
+      - '127.0.0.1:8080:8080'
+    networks: [temporal-network]
+    logging: *logging
+
+volumes:
+  postiz-config:
+  postiz-uploads:
+  postiz-postgres-data:
+  postiz-redis-data:
+  temporal-es-data:
+  temporal-postgres-data:
+
+networks:
+  postiz-network:
+  temporal-network:
+    name: temporal-network
