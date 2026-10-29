@@ -2,7 +2,8 @@
 
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Logo } from '@gitroom/frontend/components/new-layout/logo';
-import { jakartaSans } from '@gitroom/frontend/fonts/plus-jakarta-sans/plus.jakarta.sans.font';
+import { SetjooLauncher } from '@gitroom/frontend/components/new-layout/setjoo.launcher';
+import { outfit } from '@gitroom/frontend/fonts/outfit/outfit.font';
 const ModeComponent = dynamic(
   () => import('@gitroom/frontend/components/layout/mode.component'),
   {
@@ -102,7 +103,7 @@ export const LayoutComponent = ({ children }: { children: ReactNode }) => {
             <div
               className={clsx(
                 'flex flex-col min-h-screen min-w-screen text-newTextColor p-[12px] mobile:p-[8px] mobile:pb-[80px]',
-                jakartaSans.className
+                outfit.className
               )}
             >
               <div>{user?.admin ? <Impersonate /> : <div />}</div>
@@ -185,6 +186,7 @@ export const LayoutComponent = ({ children }: { children: ReactNode }) => {
                             <AttachToFeedbackIcon />
                           </div>
                           <NotificationComponent />
+                          <SetjooLauncher />
                         </div>
                       </div>
                       <div className="flex flex-1 min-w-0 gap-[1px] mobile:flex-col">

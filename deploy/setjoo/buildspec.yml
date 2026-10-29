@@ -24,6 +24,13 @@ phases:
     commands:
       - echo "Commit $CODEBUILD_RESOLVED_SOURCE_VERSION"
       - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+      # App launcher: fresh Setjoo app list from Identity, or keep the checked-in copy if it is unreachable.
+      - |
+        APPS=apps/frontend/src/components/new-layout/setjoo.apps.json
+        curl -fsS --max-time 15 https://auth.setjoo.com/api/v1/applications \
+          | jq -e '{applications: [.applications[] | {slug, name, publicHost, status, group}]} | select(.applications | length > 0)' > /tmp/apps.json \
+          && mv /tmp/apps.json "$APPS" && echo "Launcher: $(jq '.applications | length' "$APPS") apps from Identity" \
+          || echo "Launcher: Identity unreachable, using the checked-in app list"
   build:
     commands:
       # One image holds frontend, backend and orchestrator. URLs come from .env at runtime, so nothing is baked in.

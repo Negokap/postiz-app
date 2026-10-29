@@ -31,6 +31,8 @@ services:
       POSTIZ_GENERIC_OAUTH: 'true'
       POSTIZ_OAUTH_CLIENT_ID: 'setjoo-social'
       NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME: 'Setjoo'
+      NEXT_PUBLIC_POSTIZ_OAUTH_LOGO_URL: '/apple-touch-icon.png'
+      EMAIL_FROM_NAME: 'Setjoo Social'
       UPLOAD_DIRECTORY: '/uploads'
       NEXT_PUBLIC_UPLOAD_DIRECTORY: '/uploads'
       NX_ADD_PLUGINS: 'false'
