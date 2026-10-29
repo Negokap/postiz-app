@@ -150,6 +150,14 @@ export const SettingsPopup: FC<{
           ))}
         </div>
         <div>
+          <div className="mt-4 mobile:mt-[8px]">
+            <a
+              href="https://auth.setjoo.com/"
+              className="hover:text-newTextColor underline"
+            >
+              Manage Setjoo account
+            </a>
+          </div>
           {showLogout && (
             <div className="mt-4 mobile:mt-[8px]">
               <LogoutComponent />

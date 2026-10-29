@@ -1,0 +1,137 @@
+{
+  "applications": [
+    {
+      "slug": "business",
+      "name": "Setjoo Business",
+      "publicHost": "business.setjoo.com",
+      "status": "available",
+      "group": "operating"
+    },
+    {
+      "slug": "mail",
+      "name": "Setjoo Mail",
+      "publicHost": "mail.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "marketing",
+      "name": "Setjoo Marketing",
+      "publicHost": "marketing.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "studio",
+      "name": "Setjoo Studio",
+      "publicHost": "studio.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "tube",
+      "name": "Setjoo Tube",
+      "publicHost": "tube.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "directory",
+      "name": "Setjoo Directory",
+      "publicHost": "directory.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "hosting",
+      "name": "Setjoo Hosting",
+      "publicHost": "hosting.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "network",
+      "name": "Setjoo Network",
+      "publicHost": "network.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "freelance",
+      "name": "Setjoo Freelance",
+      "publicHost": "freelance.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "market",
+      "name": "Setjoo Market",
+      "publicHost": "market.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "crm",
+      "name": "Setjoo CRM",
+      "publicHost": "crm.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "projects",
+      "name": "Setjoo Projects",
+      "publicHost": "projects.setjoo.com",
+      "status": "coming",
+      "group": "operating"
+    },
+    {
+      "slug": "affiliate",
+      "name": "Setjoo Affiliate",
+      "publicHost": "affiliate.setjoo.com",
+      "status": "coming",
+      "group": "commercial"
+    },
+    {
+      "slug": "business-center",
+      "name": "Setjoo Business Center",
+      "publicHost": "ads.setjoo.com",
+      "status": "coming",
+      "group": "commercial"
+    },
+    {
+      "slug": "ads",
+      "name": "Setjoo Ads",
+      "publicHost": "ads.setjoo.com",
+      "status": "coming",
+      "group": "commercial"
+    },
+    {
+      "slug": "payments",
+      "name": "Setjoo Payments",
+      "publicHost": "payments.setjoo.com",
+      "status": "coming",
+      "group": "commercial"
+    },
+    {
+      "slug": "analytics",
+      "name": "Setjoo Analytics",
+      "publicHost": "analytics.setjoo.com",
+      "status": "coming",
+      "group": "intelligence"
+    },
+    {
+      "slug": "automation",
+      "name": "Setjoo Automation",
+      "publicHost": "automation.setjoo.com",
+      "status": "coming",
+      "group": "intelligence"
+    },
+    {
+      "slug": "ai",
+      "name": "Setjoo AI",
+      "publicHost": "ai.setjoo.com",
+      "status": "coming",
+      "group": "intelligence"
+    }
+  ]
+}

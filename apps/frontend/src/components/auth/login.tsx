@@ -91,6 +91,9 @@ export function Login() {
                 {billingEnabled && <WalletProvider />}
               </div>
             )}
+            {/* Setjoo: with generic OIDC on, Identity is the only way in */}
+            {!genericOauth && (
+            <>
             <div className="h-[20px] mb-[24px] mt-[24px] relative">
               <div className="absolute w-full h-[1px] bg-fifth top-[50%] -translate-y-[50%]" />
               <div
@@ -159,6 +162,8 @@ export function Login() {
                 </p>
               </div>
             </div>
+            </>
+            )}
           </div>
         </div>
       </form>

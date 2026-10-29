@@ -74,7 +74,7 @@ export class EmailService {
 
     const modifiedHtml = `
     <div style="
-        background: linear-gradient(to bottom right, #e6f2ff, #f0e6ff);
+        background: #f4f2f2;
         display: flex;
         align-items: center;
         justify-content: center;

@@ -5,6 +5,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Setjoo brand (ADR 0004)
+        setjoo: {
+          red: '#ED1C24',
+          'red-50': '#FDE8E9',
+          'red-100': '#F9C5C7',
+          ink: '#231F20',
+          'ink-muted': '#6B6566',
+          paper: '#FFFFFF',
+          mist: '#F4F2F2',
+          line: '#E6E2E2',
+        },
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
         textColor: 'var(--new-btn-text)',
@@ -122,7 +133,7 @@ module.exports = {
         loginBg: 'url(/auth/bg-login.png)',
       },
       fontFamily: {
-        sans: ['Helvetica Neue'],
+        sans: ['var(--font-outfit)', 'Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       animation: {
         fade: 'fadeOut 0.5s ease-in-out',
