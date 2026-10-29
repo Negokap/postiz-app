@@ -26,7 +26,7 @@ export const OauthProvider = () => {
   return (
     <div
       onClick={gotoLogin}
-      className={`cursor-pointer flex-1 bg-btnPrimary h-[52px] rounded-[10px] flex justify-center items-center text-white font-[600] gap-[10px]`}
+      className={`cursor-pointer w-full bg-btnPrimary h-[52px] rounded-[10px] flex justify-center items-center text-white font-[600] gap-[10px]`}
     >
       <div className="bg-white rounded-full p-[4px] flex">
         <SafeImage

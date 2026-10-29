@@ -95,4 +95,5 @@ required one is missing. The box's machine identity is read-only.
 | Arya | DNS: `social.setjoo.com` A → 45.90.108.159 (Cloud DNS), then `sudo certbot --nginx -d social.setjoo.com` on hst-5 |
 | Arya | Infisical project `postiz` / `prod`: import `/root/postiz-import.env` on hst-5 (generated secrets + production URLs), fill the empty keys, delete the file; read-only machine identity into `/root/.infisical/postiz.env` |
 | Arya / Pierre | Setjoo Identity: deploy the `setjoo-social` client with `SETJOO_CLIENT_SECRET_SOCIAL` = Infisical's `POSTIZ_OAUTH_CLIENT_SECRET`, redirect URI `https://social.setjoo.com/settings` |
+| ✅ | Rebrand: `bash deploy/setjoo/rebrand.sh` renames visible "Postiz" to "Setjoo Social" (UI, all translations, emails). Re-run after every upstream merge |
 | Arya | GitHub: protect `setjoo` (PR + one review). Merging is then the only way to deploy |
