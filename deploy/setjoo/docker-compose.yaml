@@ -128,7 +128,7 @@ services:
       - ES_VERSION=v7
       - TEMPORAL_NAMESPACE=default
     volumes:
-      - ../../dynamicconfig:/etc/temporal/config/dynamicconfig
+      - ${TEMPORAL_DYNAMICCONFIG_DIR:-../../dynamicconfig}:/etc/temporal/config/dynamicconfig
     networks: [temporal-network]
     logging: *logging
 

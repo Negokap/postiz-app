@@ -1,0 +1,44 @@
+# AWS CodeBuild: builds the Setjoo Social (Postiz fork) image, pushes it to ECR,
+# then deploys to hst-5 over SSH. Same shape as the Plane/Kobnoo/Fwaye/MPP
+# pipelines; see README.md next to this file for the one-time setup.
+#
+# Needs: CodeBuild project "postiz-build" (PRIVILEGED, x86_64, BUILD_GENERAL1_LARGE:
+# the frontend build uses a 4 GB Node heap), ECR repo "postiz", and the
+# SSM SecureString /postiz/deploy-ssh-key (private key of deploy@hst-5).
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    AWS_REGION: "us-east-1"
+    ECR_REGISTRY: "535391556744.dkr.ecr.us-east-1.amazonaws.com"
+    ECR_REPO: "535391556744.dkr.ecr.us-east-1.amazonaws.com/postiz"
+    DEPLOY_HOST: "45.90.108.159"
+    DEPLOY_USER: "deploy"
+    DEPLOY_DIR: "/opt/setjoo-social"
+  parameter-store:
+    DEPLOY_SSH_KEY: /postiz/deploy-ssh-key
+
+phases:
+  pre_build:
+    commands:
+      - echo "Commit $CODEBUILD_RESOLVED_SOURCE_VERSION"
+      - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+  build:
+    commands:
+      # One image holds frontend, backend and orchestrator. URLs come from .env at runtime, so nothing is baked in.
+      - docker build -f Dockerfile.dev --build-arg NEXT_PUBLIC_VERSION="${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}" -t "$ECR_REPO:postiz-$CODEBUILD_RESOLVED_SOURCE_VERSION" .
+      - docker push "$ECR_REPO:postiz-$CODEBUILD_RESOLVED_SOURCE_VERSION"
+  post_build:
+    commands:
+      - if [ "$CODEBUILD_BUILD_SUCCEEDING" != "1" ]; then echo "Build failed, not deploying"; exit 1; fi
+      - mkdir -p ~/.ssh && printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+      - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+      - TAG="$CODEBUILD_RESOLVED_SOURCE_VERSION"
+      - SSH="ssh -i $HOME/.ssh/deploy $DEPLOY_USER@$DEPLOY_HOST"
+      - scp -i ~/.ssh/deploy deploy/setjoo/docker-compose.yaml deploy/setjoo/deploy.sh deploy/setjoo/sync-env.sh "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/"
+      - scp -i ~/.ssh/deploy dynamicconfig/development-sql.yaml "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/dynamicconfig/"
+      # Short-lived ECR token over stdin, so the box needs no AWS credentials and the token never shows in a command line.
+      - aws ecr get-login-password --region "$AWS_REGION" | $SSH "sudo -n docker --config $DEPLOY_DIR/.docker login --username AWS --password-stdin $ECR_REGISTRY"
+      - $SSH "sudo -n env POSTIZ_REPO=$ECR_REPO POSTIZ_TAG=$TAG bash $DEPLOY_DIR/deploy.sh"
+      - echo "Deployed $TAG"
