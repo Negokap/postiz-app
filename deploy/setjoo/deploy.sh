@@ -32,7 +32,9 @@ for key in MAIN_URL FRONTEND_URL NEXT_PUBLIC_BACKEND_URL JWT_SECRET POSTIZ_DB_PA
   grep -q "^$key=." .env || { echo "FATAL: $key missing or empty in Infisical postiz/prod"; exit 1; }
 done
 docker compose config -q
-docker compose pull --quiet
+# `docker compose pull` hangs on the ECR image (compose v5, seen 2026-11-05/06); plain `docker pull` doesn't.
+docker pull -q "$POSTIZ_IMAGE" >/dev/null
+docker compose pull --quiet $(docker compose config --services | grep -vx postiz)
 
 PREV_TAG=$(cat .deployed-tag 2>/dev/null || true)
 healthy() {
