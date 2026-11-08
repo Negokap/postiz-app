@@ -5,7 +5,7 @@ import SafeImage from '@gitroom/react/helpers/safe.image';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
-// Set on logout so the login page doesn't bounce straight back into SSO.
+// Set on logout (localStorage, so every tab sees it) so the login page doesn't bounce straight back into SSO.
 export const NO_AUTO_SSO_KEY = 'noAutoSso';
 const LAST_AUTO_SSO_KEY = 'lastAutoSso';
 
@@ -16,7 +16,7 @@ const shouldAutoSso = () => {
     if (search || !/^\/auth(\/login)?\/?$/.test(pathname)) {
       return false;
     }
-    if (sessionStorage.getItem(NO_AUTO_SSO_KEY)) {
+    if (localStorage.getItem(NO_AUTO_SSO_KEY)) {
       return false;
     }
     // Loop guard: at most one automatic attempt per 30s.
@@ -37,7 +37,7 @@ export const OauthProvider = () => {
   const t = useT();
   const gotoLogin = useCallback(async () => {
     try {
-      sessionStorage.removeItem(NO_AUTO_SSO_KEY);
+      localStorage.removeItem(NO_AUTO_SSO_KEY);
     } catch {}
     try {
       const response = await fetch('/auth/oauth/GENERIC');
