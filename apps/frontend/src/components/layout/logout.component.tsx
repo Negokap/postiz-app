@@ -6,6 +6,7 @@ import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { setCookie } from '@gitroom/frontend/components/layout/layout.context';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { NO_AUTO_SSO_KEY } from '@gitroom/frontend/components/auth/providers/oauth.provider';
 export const LogoutComponent: FC<{ isIcon?: boolean }> = ({ isIcon }) => {
   const fetch = useFetch();
   const { isGeneral, isSecured } = useVariables();
@@ -29,7 +30,7 @@ export const LogoutComponent: FC<{ isIcon?: boolean }> = ({ isIcon }) => {
         });
       }
       try {
-        sessionStorage.setItem('noAutoSso', '1');
+        localStorage.setItem(NO_AUTO_SSO_KEY, '1');
       } catch {}
       window.location.href = '/';
     }
