@@ -28,6 +28,9 @@ export const LogoutComponent: FC<{ isIcon?: boolean }> = ({ isIcon }) => {
           method: 'POST',
         });
       }
+      try {
+        sessionStorage.setItem('noAutoSso', '1');
+      } catch {}
       window.location.href = '/';
     }
   }, []);
