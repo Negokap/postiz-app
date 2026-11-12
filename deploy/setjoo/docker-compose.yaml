@@ -37,7 +37,7 @@ services:
       NEXT_PUBLIC_UPLOAD_DIRECTORY: '/uploads'
       NX_ADD_PLUGINS: 'false'
       # Add Channel shows only networks that work end to end. Remove a name here once its app keys are in Infisical.
-      HIDDEN_PROVIDERS: 'x,linkedin,linkedin-page,reddit,instagram,instagram-standalone,facebook,gmb,tiktok,tiktok-business,dribbble,discord,slack,kick,twitch,mastodon,mastodon-custom,lemmy,wrapcast,telegram,nostr,vk,medium,listmonk,moltbook,whop,skool,mewe,tumblr'
+      HIDDEN_PROVIDERS: 'x,pinterest,linkedin,linkedin-page,reddit,instagram,instagram-standalone,gmb,tiktok,tiktok-business,dribbble,discord,slack,kick,twitch,mastodon,mastodon-custom,lemmy,wrapcast,telegram,nostr,vk,medium,listmonk,moltbook,whop,skool,mewe,tumblr'
     volumes:
       - postiz-config:/config/
       - postiz-uploads:/uploads/
