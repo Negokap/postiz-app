@@ -24,6 +24,11 @@ phases:
     commands:
       - echo "Commit $CODEBUILD_RESOLVED_SOURCE_VERSION"
       - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+      # Docker Hub rate-limits CodeBuild's shared IPs (429 on 2026-11-13). Pull the same base image from the
+      # ECR Public mirror and tag it locally, so the build uses it without asking Docker Hub.
+      - |
+        BASE=$(awk '/^FROM /{print $2; exit}' Dockerfile.dev)
+        docker pull -q "public.ecr.aws/docker/library/$BASE" && docker tag "public.ecr.aws/docker/library/$BASE" "$BASE"
       # App launcher: fresh Setjoo app list from Identity, or keep the checked-in copy if it is unreachable.
       - |
         APPS=apps/frontend/src/components/new-layout/setjoo.apps.json
