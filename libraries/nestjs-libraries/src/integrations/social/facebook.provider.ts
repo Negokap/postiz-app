@@ -39,6 +39,8 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
     'pages_manage_posts',
     'pages_manage_engagement',
     'pages_read_engagement',
+    // Meta requires it alongside pages_manage_engagement for App Review.
+    'pages_read_user_content',
     'read_insights',
   ];
   override maxConcurrentJob = 500; // Facebook has reasonable rate limits
